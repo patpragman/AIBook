@@ -9,15 +9,15 @@ t.hideturtle()
 
 x_width = 250
 y_width = 250
-t.pd()
-t.forward(x_width)
-t.left(90)
-t.forward(y_width)
-t.left(90)
-t.forward(x_width)
-t.left(90)
-t.forward(y_width)
+
+t.write("start")
 t.pu()
+t.setposition(x_width, y_width)
+t.pd()
+t.write("finish")
+t.pu()
+t.setposition(0, 0)
+
 obstacle_field = Field(x_width, y_width, t)
 
 
