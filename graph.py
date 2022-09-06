@@ -152,6 +152,59 @@ class TraversalBot:
     def a_star(self, goal: Vertex):
         pass
 
+
+    def breadth_first(self, goal: Vertex, collector=[], visited_edges=[]):
+
+
+        searching = True
+        layers = []
+        while searching:
+
+
+            sublist = []
+            nodes = []
+            for edge in self.available_edges:
+                starting_vertex = edge.starting_vertex
+                ending_vertex = edge.ending_vertex
+                nodes.append(ending_vertex)
+
+                visited_edges.append(edge)
+                visited_edges.append(self.graph.get_edges(ending_vertex, starting_vertex))
+                sublist.append(edge)
+
+                if edge in visited_edges:
+                    continue
+
+                if ending_vertex == goal:
+                    searching = False
+                    break
+
+            # make our available edges populated by the nodes we just visited
+            self.available_edges = []
+            for node in nodes:
+                self.available_edges.extend(self.graph.get_edges(node))
+
+            # now push the new layer onto the layer list
+            layers.append(sublist)
+
+
+        """
+        now we're out of the layer construction, so reverse the layer list
+        """
+        layers.reverse()
+        final_edge_list = []
+
+        target_vertex = goal
+        while layers:
+            layer = layers.pop()
+            while layer:
+                edge = layer.pop()
+                if edge.ending_vertex == target_vertex:
+                    target_vertex = edge.starting_vertex
+                    final_edge_list.append(edge)
+
+        return final_edge_list.reverse()
+
     def get_all_paths(self, goal: Vertex):
         collector = []
         self._get_all_paths(goal, collector=collector)
