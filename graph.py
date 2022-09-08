@@ -1,10 +1,14 @@
 from copy import deepcopy
+from geopy.distance import geodesic
 
 class Vertex:
 
-    def __init__(self, name="V", data={}):
+    def __init__(self, name="V", data={}, latitude=None, longitude=None):
         self.name = name
         self.data = data
+        self.latitude = latitude
+        self.longitude = longitude
+
 
     def __eq__(self, other):
         if isinstance(other, Vertex):
@@ -148,6 +152,12 @@ class TraversalBot:
 
 
 
+    def heuristic(self, edge, goal_vertex):
+        """
+        straight line distance from the end of the edge to the goal
+        """
+        point_b = edge.ending_vertex.latitude, edge.ending_vertex.longitude
+        return geodesic(point_b, goal_vertex).km
 
     def a_star(self, goal: Vertex):
         pass

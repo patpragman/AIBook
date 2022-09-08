@@ -1,12 +1,14 @@
 import pandas as pd
 from graph import Vertex
 from graph import Graph
+from get_city_latlon import get_latlon
 
 df = pd.read_csv("romania.csv")
 vertices = {}
 
 for city in df.columns[1:]:
     v = Vertex(city)
+    v.latitude, v.longitude = get_latlon(city)
     vertices[city] = v
 
 romania = Graph()
