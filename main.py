@@ -10,6 +10,7 @@ if __name__ == "__main__":
     bot1 = TraversalBot(graph=romania, starting_vertex=timisoara)
     bot2 = TraversalBot(graph=romania, starting_vertex=timisoara)
     bot3 = TraversalBot(graph=romania, starting_vertex=timisoara)
+    bot4 = TraversalBot(graph=romania, starting_vertex=timisoara)
 
     print('All possible paths:')
     start = datetime.utcnow()
@@ -51,4 +52,17 @@ if __name__ == "__main__":
         print(edge)
     print("total:", weight)
     print(f"{bfs_time.microseconds} microseconds to get the quickest path with breadth first search")
+    print(4*"\n")
 
+
+    print("A*")
+    start = datetime.utcnow()
+    a_star = bot4.a_star(bucharest)
+    stop = datetime.utcnow()
+    astar_time = stop - start
+    weight = 0
+    for edge in bfs:
+        weight += edge.weight
+        print(edge)
+    print("total:", weight)
+    print(f"{astar_time.microseconds} microseconds to get the quickest path with A*")

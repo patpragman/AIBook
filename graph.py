@@ -119,6 +119,10 @@ class Graph:
         else:
             return None
 
+    def get_all_edges(self):
+        # return all possible vertices
+        return [self.get_edge(vertex) for vertex in self.vertices.values()]
+
 class TraversalBotExection(Exception):
 
     def __init__(self, what):
@@ -157,10 +161,61 @@ class TraversalBot:
         straight line distance from the end of the edge to the goal
         """
         point_b = edge.ending_vertex.latitude, edge.ending_vertex.longitude
-        return geodesic(point_b, goal_vertex).km
+        goal = goal_vertex.latitude, goal_vertex.longitude
+        return geodesic(point_b, goal).km
 
     def a_star(self, goal: Vertex):
-        pass
+        # function from text book to do astar
+        h = lambda edge: self.heuristic(edge, goal)
+        g = lambda edge: edge.weight
+        f = lambda x: h(x) + g(x)
+
+        seen_vertices = [self.current_vertex]
+        path = []
+
+        while True:
+            seen_vertices.append(self.current_vertex)  # put this vertex into the "seen" list
+
+            if self.current_vertex == goal:
+                return path
+
+            """
+            expand the node you're at, calculate the smallest f(n) then travel along the other edges
+            """
+
+            selected_edge = None
+            for edge in self.available_edges:
+                if edge.ending_vertex in seen_vertices:
+                    # if you've already been to a node, don't bother to consider it
+                    continue
+
+                f_of_n = f(edge)
+                if not selected_edge:
+                    selected_edge = edge
+                elif f_of_n < f(selected_edge):
+                    selected_edge = edge
+
+            if selected_edge:
+                # if you pick an edge, then set the last vertex, then travel down the edge and save the results
+                seen_vertices.append(self.current_vertex)
+                path.append(selected_edge)
+                self.move_along(selected_edge)
+            else:
+                """
+                in this case you're down a hole of some sort and can't go to any edges that you haven't been to before
+                
+                we need to go back a step and try to continue from there without changing the nodes you *can't* go to
+                         
+                """
+                try:
+                    last_edge = path.pop()
+                    self.teleport(last_edge.starting_vertex)
+                except IndexError:
+                    return []
+
+
+
+
 
 
     def breadth_first(self, goal: Vertex, collector=[], visited_edges=[]):
