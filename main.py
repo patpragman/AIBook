@@ -6,11 +6,13 @@ if __name__ == "__main__":
 
     timisoara = vertices["Timisoara"]
     bucharest = vertices['Bucharest']
+    arad = vertices['Arad']
 
     bot1 = TraversalBot(graph=romania, starting_vertex=timisoara)
     bot2 = TraversalBot(graph=romania, starting_vertex=timisoara)
     bot3 = TraversalBot(graph=romania, starting_vertex=timisoara)
     bot4 = TraversalBot(graph=romania, starting_vertex=timisoara)
+    bot5 = TraversalBot(graph=romania, starting_vertex=timisoara)
 
     print('All possible paths:')
     start = datetime.utcnow()
@@ -40,7 +42,6 @@ if __name__ == "__main__":
     print(f"{brute_force_time.microseconds} microseconds to brute force the quickest path")
     print(4*"\n")
 
-
     print("Breadth first search!")
     start = datetime.utcnow()
     bfs = bot3.brute_force_shortest_path(bucharest)
@@ -61,8 +62,25 @@ if __name__ == "__main__":
     stop = datetime.utcnow()
     astar_time = stop - start
     weight = 0
-    for edge in bfs:
+    for edge in a_star:
         weight += edge.weight
         print(edge)
     print("total:", weight)
     print(f"{astar_time.microseconds} microseconds to get the quickest path with A*")
+    print(4*"\n")
+
+    print("Greedy Best First")
+    start = datetime.utcnow()
+    greedy_bfs = bot4.greedy_bfs(bucharest)
+    stop = datetime.utcnow()
+    greedy_bfs_time = stop - start
+    weight = 0
+    for edge in a_star:
+        weight += edge.weight
+        print(edge)
+    print("total:", weight)
+    print(f"{greedy_bfs_time.microseconds} microseconds to get the quickest path with Greedy BFS")
+    print(4*"\n")
+
+
+
