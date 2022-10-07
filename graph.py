@@ -8,6 +8,10 @@ class Vertex:
         self.data = data
         self.latitude = latitude
         self.longitude = longitude
+        self.g = None
+        self.h = None
+        self.f = None
+        self.parent = None
 
 
     def __eq__(self, other):
@@ -24,6 +28,9 @@ class Vertex:
 
     def __hash__(self):
         return hash(self._key())
+
+    def __lt__(self, other):
+        return self.f < other.f
 
 
 class Edge:
@@ -119,6 +126,10 @@ class Graph:
         else:
             return None
 
+    def get_all_edges(self):
+        # return all possible vertices
+        return [self.get_edge(vertex) for vertex in self.vertices.values()]
+
 class TraversalBotExection(Exception):
 
     def __init__(self, what):
@@ -152,16 +163,102 @@ class TraversalBot:
 
 
 
-    def heuristic(self, edge, goal_vertex):
+    def heuristic(self, point_a, point_b):
         """
-        straight line distance from the end of the edge to the goal
+        straight line distance from one point to another
         """
-        point_b = edge.ending_vertex.latitude, edge.ending_vertex.longitude
-        return geodesic(point_b, goal_vertex).km
+        point_a = point_a.latitude, point_a.longitude
+        point_b = point_b.latitude, point_b.longitude
+        return geodesic(point_a, point_b).km
 
     def a_star(self, goal: Vertex):
-        pass
+        # function from text book to do astar
 
+        if self.current_vertex == goal:
+            # if you start out at the goal, the path is []
+            return []
+
+        # populate the heuristic distance for all the nodes
+        for vertex in self.graph.vertices:
+            vertex.h = self.heuristic(vertex, goal)
+
+        # let's populate g with the heuristic distance to the starting node
+        for vertex in self.graph.vertices:
+            vertex.g = self.heuristic(vertex, self.current_vertex)
+
+        # alright, let's get f for all those nodes too, might as well
+        for vertex in self.graph.vertices:
+            vertex.f = vertex.g + vertex.h
+
+        possible = [self.current_vertex]
+        impossible = []
+        while True:
+            possible.sort()
+            current = possible.pop(0)
+
+            if current == goal:
+                break
+
+            # expand the edges!
+            for edge in self.graph.get_edges(current):
+                if edge.ending_vertex in impossible:
+                    # this would be like it's blocked or can't go any further - in grid world this would be an obstacle
+                    continue
+                elif edge.ending_vertex not in possible:
+                    edge.ending_vertex.parent = current
+                    possible.append(edge.ending_vertex)
+                elif edge.ending_vertex in possible:
+                    # if this is possible... we need to see if this is a better way to go
+
+                    """now we need to check to see if the path to this square is better
+                    
+                    we'll use the value of g (or distance from the starting point) as our metric
+                    
+                    """
+                    if current.g < edge.ending_vertex.g:
+                        # this is a better deal, we need to switch the parent
+                        edge.ending_vertex.parent = current
+
+                        # update f values
+                        for vertex in self.graph.vertices:
+                            vertex.f = vertex.g + vertex.h
+
+                impossible.append(current)
+
+
+
+        path = []
+        node = goal
+        while node != self.current_vertex:
+            point_b = node
+            point_a = node.parent
+            path.append(self.graph.get_edge(point_a, point_b))
+            node = point_a
+
+        path.reverse()
+        return path
+
+    def greedy_bfs(self, goal: Vertex):
+        # populate the heuristic distance for all the nodes make that your f
+        for vertex in self.graph.vertices:
+            vertex.f = self.heuristic(vertex, goal)
+
+
+        path = []
+        visited = []
+        while True:
+            if self.current_vertex == goal:
+                break
+            visited.append(self.current_vertex)
+
+            potential = {edge.ending_vertex.h:
+                             edge.ending_vertex for edge in
+                         self.graph.get_edges(self.current_vertex) if edge.ending_vertex not in visited}
+            best = potential[min(potential)]
+            path.append(self.graph.get_edge(self.current_vertex, best))
+            self.teleport(best)
+
+        return path
 
     def breadth_first(self, goal: Vertex, collector=[], visited_edges=[]):
 
