@@ -100,3 +100,5 @@ if __name__ == "__main__":
         current_state=state.T
     )
     print(state)
+
+    print('S_3 = 1 | O) = ', state[0]/state.sum())
