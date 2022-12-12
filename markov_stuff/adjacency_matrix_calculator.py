@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.linalg import eig
-from numpy.linalg import norm
 import numpy.typing as npt
 
 
