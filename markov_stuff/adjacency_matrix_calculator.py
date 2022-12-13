@@ -50,12 +50,21 @@ if __name__ == "__main__":
         [0.5, 0.0, 0.5]
     ])
 
+    # example to show repeated iteration of matrix multiplication converges
+    # to the eigenvector
+    copy = test_array.copy()
+    for i in range(0, 100):
+        copy = copy @ test_array
+    print([np.diag(copy)])
+    print(calculate_final_states(test_array))
+
+
+    # same thing with a 2d matrix
     test_array_2 = np.array([
         [0.5, 0.5],
         [0.3, 0.7]
     ])
 
-    print(calculate_final_states(test_array))
     print(calculate_final_states(test_array_2))
 
 
@@ -101,3 +110,5 @@ if __name__ == "__main__":
     print(state)
 
     print('S_3 = 1 | O) = ', state[0]/state.sum())
+
+    

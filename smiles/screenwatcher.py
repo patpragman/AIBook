@@ -5,8 +5,8 @@ import PIL
 import numpy as np
 
 cv2_base_dir = os.path.dirname(os.path.abspath(cv2.__file__))
-haar_model = os.path.join(cv2_base_dir, 'data/haarcascade_frontalface_default.xml')
-
+haar_model = os.path.join(cv2_base_dir, 'data/haarcascade_fullbody.xml')
+print(haar_model)
 detector = cv2.CascadeClassifier(haar_model)
 webcam = cv2.VideoCapture(0)
 
